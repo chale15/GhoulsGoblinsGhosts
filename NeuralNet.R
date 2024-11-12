@@ -20,7 +20,7 @@ my_recipe <- recipe(type~., data = train) %>%
   step_range(all_numeric_predictors(), min=0, max=1)
 
 
-#Naive Bayes Model
+#Neural Net Model
 
 nn_model <- mlp(hidden_units=tune(),
                 epochs=50,
@@ -58,3 +58,16 @@ nn_submission <- nn_preds %>%
 
 
 vroom_write(x=nn_submission, file="./Submissions/NNPreds1.csv", delim=",")
+
+cv_results %>%
+  collect_metrics() %>%
+  filter(.metric == "accuracy") %>%
+  ggplot(aes(x = hidden_units, y = mean)) +
+  geom_line(color = "blue") +
+  geom_point(color = "red") +
+  labs(
+    title = "Cross-Validation Results for Neural Network Model",
+    x = "Number of Hidden Units",
+    y = "Mean Accuracy"
+  ) +
+  theme_minimal()
