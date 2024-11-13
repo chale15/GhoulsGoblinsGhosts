@@ -5,8 +5,6 @@ library(glmnet)
 library(embed)
 library(naivebayes)
 library(discrim)
-library(themis)
-libray(rstanarm)
 
 #Read Data
 
@@ -17,9 +15,6 @@ test <- vroom("test.csv")
 
 my_recipe <- recipe(type~., data = train) %>% 
   step_mutate_at(color, fn = factor) %>% 
-  step_mutate(id, feature = id) %>% 
-  step_lencode_glm(all_nominal_predictors(), outcome = vars(type)) %>% 
-  step_smote(all_outcomes(), neighbors=3) %>% 
   step_range(all_numeric_predictors(), min=0, max=1)
 
 
@@ -36,13 +31,12 @@ nb_workflow <- workflow() %>%
 
 tuning_grid <- grid_regular(Laplace(), smoothness(), levels = 20)
 
-
 folds <- vfold_cv(train, v = 10, repeats=1)
 
 cv_results <- nb_workflow %>% 
   tune_grid(resamples = folds,
             grid = tuning_grid, 
-            metrics = metric_set(roc_auc, accuracy))
+            metrics = metric_set(accuracy))
 
 best_tune <- cv_results %>% select_best(metric='accuracy')
 
@@ -60,4 +54,4 @@ nb_submission <- nb_preds %>%
   rename(type = .pred_class) 
 
 
-vroom_write(x=nb_submission, file="./Submissions/NBPreds40.csv", delim=",")
+vroom_write(x=nb_submission, file="./Submissions/NBPreds18.csv", delim=",")
