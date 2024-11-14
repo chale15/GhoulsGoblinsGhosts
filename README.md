@@ -1,4 +1,4 @@
-# ggg_kaggle
+# Ghouls, Goblins, and Ghosts
 Code and Submissions for the Ghouls, Goblins, and Ghosts Kaggle Competition
 
 
